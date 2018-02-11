@@ -1,0 +1,21 @@
+<resources>
+    <string name="APP_NAME">LensAlert</string>
+    <string name="NOTIFICATION_DESCRIPTION">Have you had your contact lenses today?</string>
+    <string name="YES_BUTTON">YES</string>
+    <string name="HALF_BUTTON">HALF</string>
+    <string name="NO_BUTTON">NO</string>
+    <string name="LENSES_WORN_OUT">Your lenses are worn out. You should replace them!</string>
+    <string name="NOTIFICATION">Notification</string>
+    <string name="SETTINGS">Settings</string>
+    <string name="ABOUT">About</string>
+    <string name="SAVE">SAVE</string>
+    <string name="PICK_TIME">Pick time</string>
+    <string name="SETTINGS_SAVED">Settings saved</string>
+    <string name="TIME">Time:</string>
+    <string name="TIME_SETTINGS_DESCRIPTION">Everyday a prompt notification will be shown at set time:</string>
+    <string name="LENS_DURATION">Lens durability (days):</string>
+    <string name="ENABLE">Enable</string>
+    <string name="NOTIFIATION_ICON">Notification icon</string>
+    <string name="LENS_PROGRESS">Contact lens progress:</string>
+    <string name="PROGRESS">%1$s out of %2$d days</string>
+</resources>
