@@ -14,7 +14,7 @@ class AlarmSetReceiver : BroadcastReceiver() {
     private lateinit var preferences: PreferencesManager
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i("AlarmSetReceiver", "AlarmReceiver run")
+        Log.i("AlarmSetReceiver", "AlarmSetReceiver run")
 
         preferences = PreferencesManager(context)
 

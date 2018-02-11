@@ -16,16 +16,17 @@ import standa.lensalert.PreferencesManager.Companion.PREFERENCES_NOTIFICATION_HO
 import standa.lensalert.PreferencesManager.Companion.PREFERENCES_NOTIFICATION_MINUTE_KEY
 import standa.lensalert.PreferencesManager.Companion.PREFERENCES_SET_ALARM_KEY
 import standa.lensalert.R
+import standa.lensalert.fragments.TimePickerFragment
 
 
-class SettingsActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
+class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
 
     private val preferences by lazy {
         PreferencesManager(this)
     }
 
-    var hours = 0
-    var minutes = 0
+    override var hours = 0
+    override var minutes = 0
 
     private val resultIntent = Intent()
 
@@ -82,21 +83,5 @@ class SettingsActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener
                    else "0" + hour.toString()
 
         timeTextView.text = "$hourString:$minuteString"
-    }
-
-    class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
-
-        private val settingsActivity by lazy {
-            activity as SettingsActivity
-        }
-
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            return TimePickerDialog(activity, this,
-                    settingsActivity.hours, settingsActivity.minutes,true)
-        }
-
-        override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-            settingsActivity.onTimeSet(view, hourOfDay, minute)
-        }
     }
 }

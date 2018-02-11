@@ -39,7 +39,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/YES_BUTTON"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/colorAccent" />
 
         <Button
             android:id="@+id/halfBtn"
@@ -48,7 +48,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/HALF_BUTTON"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/colorAccent" />
 
         <Button
             android:id="@+id/noBtn"
@@ -57,6 +57,6 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/NO_BUTTON"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/colorAccent" />
     </LinearLayout>
 </LinearLayout>

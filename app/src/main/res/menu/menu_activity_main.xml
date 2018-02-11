@@ -3,13 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/notificationItem"
-        android:title="@string/NOTIFICATION"
+        android:id="@+id/settingsItem"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/SETTINGS"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/settingsItem"
-        android:title="@string/SETTINGS" />
+        android:id="@+id/infoItem"
+        android:title="@string/INFO" />
     <item
-        android:id="@+id/aboutItem"
-        android:title="@string/ABOUT" />
+        android:id="@+id/exitItem"
+        android:title="@string/EXIT" />
 </menu>

@@ -14,6 +14,8 @@ import standa.lensalert.PreferencesManager
 import standa.lensalert.PreferencesManager.Companion.PREFERENCES_PROGRESS_KEY
 import standa.lensalert.R
 import standa.lensalert.activities.MainActivity
+import standa.lensalert.activities.MainActivity.Companion.lensesWornOut
+import standa.lensalert.activities.MainActivity.Companion.toNiceString
 import standa.lensalert.receivers.NotificationReceiver.Companion.ACTION_SEND_NOTIFICATION
 
 const val PREFERENCES_YES = "PREFFERENCES_YES"
@@ -28,6 +30,7 @@ class ProgressSaverService : IntentService("ProgressSaverService") {
 
     override fun onHandleIntent(intent: Intent) {
         Log.i("ProgressSaverService", "ProgressSaverService run")
+
         if (intent.action == ACTION_UPDATE_PROGRESS && intent.hasExtra(PREFERENCES_PROGRESS_KEY))
             updateProgress(intent)
         else if (intent.action == ACTION_SYNC_WITH_SERVER)
@@ -35,41 +38,38 @@ class ProgressSaverService : IntentService("ProgressSaverService") {
     }
 
     private fun updateProgress(intent: Intent) {
-
         val toastString: String
 
         when (intent.getStringExtra(PREFERENCES_PROGRESS_KEY)) {
             PREFERENCES_YES -> {
                 preferences.progress += 10
-                toastString = "YES"
+                toastString = getString(R.string.YES_BUTTON)
             }
             PREFERENCES_HALF -> {
                 preferences.progress += 5
-                toastString = "HALF"
+                toastString = getString(R.string.HALF_BUTTON)
             }
             PREFERENCES_NO -> {
                 preferences.progress += 0
-                toastString = "NO"
+                toastString = getString(R.string.NO_BUTTON)
             }
             else -> {
                 throw RuntimeException("Unknown action in ProgressSaverService.")
             }
         }
 
-        if (preferences.progress >= preferences.lensDuration * 10) {
+        if (preferences.lensesWornOut()) {
             preferences.progress = preferences.lensDuration * 10
-            makeToast("$toastString saved. " + getString(R.string.LENSES_WORN_OUT), Toast.LENGTH_LONG)
             sendBroadcast(Intent(ACTION_SEND_NOTIFICATION))
         } else {
             if (intent.getBooleanExtra(CLOSE_NOTIFICATION_KEY, false))
                 closeNotificationBar()
-            makeToast("$toastString saved, progress is ${preferences.progress / 10.0} out of ${preferences.lensDuration} days", Toast.LENGTH_SHORT)
+            makeToast("$toastString ${getString(R.string.CHOSEN)}, ${getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.lensDuration)}", Toast.LENGTH_LONG)
         }
 
         preferences.date = System.currentTimeMillis()
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.ACTION_UPDATE_UI))
-
     }
 
     private fun syncWithServer(intent: Intent) {

@@ -24,7 +24,7 @@ class NotificationFactory(private val context: Context) {
         }
 
     val promptNotification: Notification by lazy {
-        val remoteView = RemoteViews(context.packageName, R.layout.notification_main)
+        val remoteView = RemoteViews(context.packageName, R.layout.notification_update_progress)
 
         Intent(context.applicationContext, ProgressSaverService::class.java).let {
             it.action = ProgressSaverService.ACTION_UPDATE_PROGRESS

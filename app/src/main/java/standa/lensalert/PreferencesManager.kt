@@ -2,6 +2,7 @@ package standa.lensalert
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.util.*
 import kotlin.reflect.KProperty
 
 class PreferencesManager(context: Context) {
