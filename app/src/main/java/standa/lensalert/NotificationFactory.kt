@@ -8,10 +8,10 @@ import android.support.v4.app.NotificationCompat
 import android.widget.RemoteViews
 import standa.lensalert.PreferencesManager.Companion.PREFERENCES_PROGRESS_KEY
 import standa.lensalert.activities.MainActivity
-import standa.lensalert.services.PREFERENCES_HALF
-import standa.lensalert.services.PREFERENCES_NO
-import standa.lensalert.services.PREFERENCES_YES
 import standa.lensalert.services.ProgressSaverService
+import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_HALF
+import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_NO
+import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_YES
 
 
 class NotificationFactory(private val context: Context) {
@@ -27,7 +27,6 @@ class NotificationFactory(private val context: Context) {
         val remoteView = RemoteViews(context.packageName, R.layout.notification_update_progress)
 
         Intent(context.applicationContext, ProgressSaverService::class.java).let {
-            it.action = ProgressSaverService.ACTION_UPDATE_PROGRESS
             it.putExtra(PREFERENCES_PROGRESS_KEY, PREFERENCES_YES)
             it.putExtra(ProgressSaverService.CLOSE_NOTIFICATION_KEY, true)
             val yesPendingIntent = PendingIntent.getService(context, 0, it, PendingIntent.FLAG_UPDATE_CURRENT)

@@ -5,9 +5,7 @@ import android.app.Dialog
 import android.app.DialogFragment
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.widget.Button
 import android.widget.NumberPicker
 import standa.lensalert.PreferencesManager
 import standa.lensalert.R

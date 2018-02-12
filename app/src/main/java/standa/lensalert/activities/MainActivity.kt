@@ -24,10 +24,10 @@ import standa.lensalert.R
 import standa.lensalert.fragments.NumberPickerFragment
 import standa.lensalert.fragments.UpdateProgressFragment
 import standa.lensalert.receivers.AlarmSetReceiver
-import standa.lensalert.services.PREFERENCES_HALF
-import standa.lensalert.services.PREFERENCES_NO
-import standa.lensalert.services.PREFERENCES_YES
 import standa.lensalert.services.ProgressSaverService
+import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_HALF
+import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_NO
+import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_YES
 import java.util.*
 
 class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgressFragment.Handler, NumberPickerFragment.Handler {
@@ -172,7 +172,6 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
 
     override fun onUpdateProgressFragmentClick(view: View) {
         val intent = Intent(applicationContext, ProgressSaverService::class.java)
-        intent.action = ProgressSaverService.ACTION_UPDATE_PROGRESS
 
         intent.putExtra(PreferencesManager.PREFERENCES_PROGRESS_KEY,
                 when (view.id) {
@@ -187,6 +186,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     override fun onPromptFragmentResponse(responseCode: Int, id: Int) {
         if(id == CLEAR_PROMPT_ID && responseCode == PromptFragment.POSITIVE){
             preferences.progress = 0
+            preferences.date = 0
             updateUI()
         }
     }
@@ -194,6 +194,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     override fun onNumberPickerFragmentClick(number: Double?) {
         if(number != null){
             preferences.progress = (number*10).toInt()
+            preferences.date = System.currentTimeMillis()
             updateUI()
         }
     }
