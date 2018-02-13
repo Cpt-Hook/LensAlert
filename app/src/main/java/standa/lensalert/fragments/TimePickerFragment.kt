@@ -22,7 +22,7 @@ class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener 
     }
 
     interface Handler: TimePickerDialog.OnTimeSetListener {
-        var hours: Int
-        var minutes: Int
+        val hours: Int
+        val minutes: Int
     }
 }

@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.widget.NumberPicker
 import standa.lensalert.PreferencesManager
 import standa.lensalert.R
-import standa.lensalert.activities.MainActivity.Companion.toNiceString
+import standa.lensalert.toNiceString
 
 class NumberPickerFragment : DialogFragment() {
 
@@ -18,7 +18,7 @@ class NumberPickerFragment : DialogFragment() {
     }
 
     private val values: Array<String> by lazy {
-        Array((handler.preferences.lensDuration * 2) + 1, { i ->
+        Array((handler.preferences.duration * 2) + 1, { i ->
             (i/2.0).toNiceString()
         })
     }

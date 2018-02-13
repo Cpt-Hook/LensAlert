@@ -7,13 +7,13 @@ import android.content.Intent
 import android.util.Log
 import standa.lensalert.NotificationFactory
 import standa.lensalert.PreferencesManager
-import standa.lensalert.activities.MainActivity.Companion.isAfterYesterday
-import standa.lensalert.activities.MainActivity.Companion.lensesWornOut
+import standa.lensalert.isAfterYesterday
+import standa.lensalert.lensesWornOut
 
 class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.i("NotificationReceiver", "NotificationReceiver run")
+        Log.i("NotificationReceiver", "run")
 
         val preferences = PreferencesManager(context)
         if(intent.action == ACTION_SEND_NOTIFICATION){

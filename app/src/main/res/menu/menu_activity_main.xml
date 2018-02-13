@@ -3,10 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/refreshItem"
+        android:icon="@android:drawable/ic_popup_sync"
+        android:title="@string/REFRESH"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/settingsItem"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:title="@string/SETTINGS"
-        app:showAsAction="ifRoom" />
+        android:title="@string/SETTINGS" />
     <item
         android:id="@+id/infoItem"
         android:title="@string/INFO" />

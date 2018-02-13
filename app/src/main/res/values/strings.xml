@@ -29,4 +29,8 @@
     <string name="CHOSEN">chosen</string>
     <string name="CHOOSE_PROGRESS">Choose your lens progress:</string>
     <string name="OK">OK</string>
+    <string name="REFRESH">Refresh</string>
+    <string name="SYNCED">Synced with server</string>
+    <string name="FAILED_SYNC">Failed to sync with server</string>
+    <string name="NO_INTERNET">No internet connection</string>
 </resources>

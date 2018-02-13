@@ -7,34 +7,31 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import standa.lensalert.PreferencesManager
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_LENS_DURATION
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_NOTIFICATION_HOUR_KEY
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_NOTIFICATION_MINUTE_KEY
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_SET_ALARM_KEY
+import standa.lensalert.*
 import standa.lensalert.fragments.PromptFragment
-import standa.lensalert.R
 import standa.lensalert.fragments.NumberPickerFragment
 import standa.lensalert.fragments.UpdateProgressFragment
-import standa.lensalert.receivers.AlarmSetReceiver
 import standa.lensalert.services.ProgressSaverService
 import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_HALF
 import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_NO
 import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_YES
-import java.util.*
 
 class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgressFragment.Handler, NumberPickerFragment.Handler {
 
     override val preferences by lazy {
         PreferencesManager(this)
     }
+
+    private var lastSynced: Long? = null
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -44,7 +41,25 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         }
     }
 
+    private val getPreferencesResultHandler = object: ResultHandler {
+        override val context: Context
+            get() = this@MainActivity
+        override val preferences: PreferencesManager
+            get() = this@MainActivity.preferences
+        override val preExecute: () -> Unit = {
+            loadingProgressBar.visibility = View.VISIBLE
+        }
+        override val postExecute: (Int)-> Unit = {
+            loadingProgressBar.visibility = View.INVISIBLE
+            updateUI()
+            lastSynced = System.currentTimeMillis()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        if(savedInstanceState != null && savedInstanceState.containsKey(LAST_SYNCED_KEY))
+            lastSynced = savedInstanceState.getLong(LAST_SYNCED_KEY)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -84,6 +99,17 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     override fun onResume() {
         super.onResume()
         updateUI()
+        lastSynced?.let {
+            if(it + (1000 * 60 * 30) < System.currentTimeMillis()){
+                val task = SyncPreferencesTask(getPreferencesResultHandler)
+                task.execute()
+                return
+            }
+        }
+        if(lastSynced == null){
+            val task = SyncPreferencesTask(getPreferencesResultHandler)
+            task.execute()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -91,9 +117,17 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         return true
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        lastSynced?.let { outState?.putLong(LAST_SYNCED_KEY, it) }
+        super.onSaveInstanceState(outState)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
+            R.id.refreshItem -> {
+                val task = SyncPreferencesTask(getPreferencesResultHandler)
+                task.execute()
+            }
             R.id.settingsItem -> {
                 val settingsIntent = Intent(this, SettingsActivity::class.java)
                 startActivityForResult(settingsIntent, 0)
@@ -111,43 +145,14 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, dataIntent: Intent?) {
         if (resultCode == Activity.RESULT_OK && dataIntent != null) {
-            extractAndSaveSettings(dataIntent)
             Toast.makeText(this, getString(R.string.SETTINGS_SAVED), Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun extractAndSaveSettings(dataIntent: Intent) {
-        if (dataIntent.hasExtra(PREFERENCES_NOTIFICATION_HOUR_KEY) &&
-                dataIntent.hasExtra(PREFERENCES_NOTIFICATION_MINUTE_KEY)) {
-            preferences.hours = dataIntent.getIntExtra(PREFERENCES_NOTIFICATION_HOUR_KEY, 0)
-            preferences.minutes = dataIntent.getIntExtra(PREFERENCES_NOTIFICATION_MINUTE_KEY, 0)
-        }
-
-        if (dataIntent.hasExtra(PREFERENCES_LENS_DURATION))
-            preferences.lensDuration = dataIntent.getIntExtra(PREFERENCES_LENS_DURATION, 14)
-
-        if (dataIntent.hasExtra(PREFERENCES_SET_ALARM_KEY))
-            preferences.setAlarm = dataIntent.getBooleanExtra(PREFERENCES_SET_ALARM_KEY, true)
-
-        //alarmSet or hours and minutes changed
-        if (dataIntent.hasExtra(PREFERENCES_SET_ALARM_KEY) ||
-                (dataIntent.hasExtra(PREFERENCES_NOTIFICATION_HOUR_KEY) && dataIntent.hasExtra(PREFERENCES_NOTIFICATION_MINUTE_KEY))) {
-
-            val alarmAction =
-                    if (preferences.setAlarm) AlarmSetReceiver.ACTION_ALARM_SET
-                    else AlarmSetReceiver.ACTION_ALARM_DISABLE
-
-            sendBroadcast(Intent(alarmAction))
-        }
-
-        if (preferences.lensesWornOut())
-            preferences.progress = preferences.lensDuration * 10
-    }
-
     private fun updateUI() {
-        progressBar.max = preferences.lensDuration * 10
+        progressBar.max = preferences.duration * 10
         progressBar.progress = preferences.progress
-        progressTextView.text = getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.lensDuration)
+        progressTextView.text = getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.duration)
 
         if (preferences.lensesWornOut())
             progressBar.progressTintList = ColorStateList.valueOf(getColor(R.color.colorPrimaryDark))
@@ -187,6 +192,8 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         if(id == CLEAR_PROMPT_ID && responseCode == PromptFragment.POSITIVE){
             preferences.progress = 0
             preferences.date = 0
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+            task.execute()
             updateUI()
         }
     }
@@ -195,36 +202,15 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         if(number != null){
             preferences.progress = (number*10).toInt()
             preferences.date = System.currentTimeMillis()
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+            task.execute()
             updateUI()
         }
     }
 
     companion object {
-
-        fun PreferencesManager.lensesWornOut(): Boolean {
-            return this.progress >= this.lensDuration * 10
-        }
-
-        fun Long.isAfterYesterday(): Boolean {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = System.currentTimeMillis()
-            calendar.set(Calendar.HOUR, 0)
-            calendar.set(Calendar.MINUTE, 0)
-            calendar.set(Calendar.SECOND, 0)
-            calendar.set(Calendar.MILLISECOND, 0)
-            calendar.set(Calendar.AM_PM, Calendar.AM)
-
-            return this >= calendar.timeInMillis
-        }
-
-        fun Double.toNiceString(): String {
-            return if (this % 1.0 != 0.0)
-                String.format("%s", this)
-            else
-                String.format("%.0f", this)
-        }
-
         const val ACTION_UPDATE_UI = "standa.lensalert.activities.ACTION_UPDATE_UI"
+        const val LAST_SYNCED_KEY = "LAST_SYNCED_KEY"
         private const val CLEAR_PROMPT_ID = 1
     }
 }

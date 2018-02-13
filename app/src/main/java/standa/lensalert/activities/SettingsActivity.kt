@@ -1,22 +1,15 @@
 package standa.lensalert.activities
 
 import android.app.Activity
-import android.app.Dialog
-import android.app.DialogFragment
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import android.widget.TimePicker
 import kotlinx.android.synthetic.main.activity_settings.*
-import standa.lensalert.PreferencesManager
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_LENS_DURATION
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_NOTIFICATION_HOUR_KEY
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_NOTIFICATION_MINUTE_KEY
-import standa.lensalert.PreferencesManager.Companion.PREFERENCES_SET_ALARM_KEY
-import standa.lensalert.R
+import standa.lensalert.*
 import standa.lensalert.fragments.TimePickerFragment
+import standa.lensalert.receivers.AlarmSetReceiver
 
 
 class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
@@ -25,8 +18,13 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
         PreferencesManager(this)
     }
 
-    override var hours = 0
-    override var minutes = 0
+    private val tempPreferences = TempPreferences()
+
+    override val hours: Int
+        get() = tempPreferences.hours ?: preferences.hours
+    override val minutes: Int
+        get() = tempPreferences.minutes ?: preferences.minutes
+
 
     private val resultIntent = Intent()
 
@@ -42,37 +40,49 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
         }
 
         saveBtn.setOnClickListener {
-            //handle ""
             try{
                 val durNumber =  durNumEditText.text.toString().toInt()
-                resultIntent.putExtra(PREFERENCES_LENS_DURATION, durNumber)
-            }catch (e: NumberFormatException){}
+                preferences.duration = durNumber
+            }catch (e: NumberFormatException){} //handle ""
 
+            saveSettings()
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
 
-        hours = preferences.hours
-        minutes = preferences.minutes
-        durNumEditText.setText(preferences.lensDuration.toString(), TextView.BufferType.EDITABLE)
+        durNumEditText.setText(preferences.duration.toString(), TextView.BufferType.EDITABLE)
 
         alarmCheckBox.isChecked = preferences.setAlarm
         alarmCheckBox.setOnCheckedChangeListener { _, isChecked ->
             pickTimeBtn.isEnabled = isChecked
-            resultIntent.putExtra(PREFERENCES_SET_ALARM_KEY, isChecked)
+            tempPreferences.setAlarm = isChecked
         }
         pickTimeBtn.isEnabled = alarmCheckBox.isChecked
         setTimeTextView()
     }
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
-        resultIntent.putExtra(PREFERENCES_NOTIFICATION_HOUR_KEY, hourOfDay)
-        resultIntent.putExtra(PREFERENCES_NOTIFICATION_MINUTE_KEY, minute)
-
-        this.minutes = minute
-        this.hours = hourOfDay
+        tempPreferences.hours = hourOfDay
+        tempPreferences.minutes = minutes
 
         setTimeTextView()
+    }
+
+    private fun saveSettings(){
+        tempPreferences.saveChangedPreferences(preferences)
+
+        if(tempPreferences.setAlarm != null || tempPreferences.hours != null){
+            val alarmAction =
+                    if (preferences.setAlarm) AlarmSetReceiver.ACTION_ALARM_SET
+                    else AlarmSetReceiver.ACTION_ALARM_DISABLE
+            sendBroadcast(Intent(alarmAction))
+        }
+
+        if (preferences.lensesWornOut())
+            preferences.progress = preferences.duration * 10
+
+        val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+        task.execute()
     }
 
     private fun setTimeTextView(minute: Int = this.minutes, hour: Int = this.hours){

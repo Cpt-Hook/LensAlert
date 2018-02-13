@@ -9,14 +9,11 @@ import android.os.Looper
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.widget.Toast
-import standa.lensalert.NotificationFactory
-import standa.lensalert.PreferencesManager
+import standa.lensalert.*
 import standa.lensalert.PreferencesManager.Companion.PREFERENCES_PROGRESS_KEY
-import standa.lensalert.R
 import standa.lensalert.activities.MainActivity
-import standa.lensalert.activities.MainActivity.Companion.lensesWornOut
-import standa.lensalert.activities.MainActivity.Companion.toNiceString
 import standa.lensalert.receivers.NotificationReceiver.Companion.ACTION_SEND_NOTIFICATION
+
 
 class ProgressSaverService : IntentService("ProgressSaverService") {
 
@@ -25,7 +22,7 @@ class ProgressSaverService : IntentService("ProgressSaverService") {
     }
 
     override fun onHandleIntent(intent: Intent) {
-        Log.i("ProgressSaverService", "ProgressSaverService run")
+        Log.i("ProgressSaverService", "run")
 
         if (intent.hasExtra(PREFERENCES_PROGRESS_KEY))
             updateProgress(intent)
@@ -53,15 +50,18 @@ class ProgressSaverService : IntentService("ProgressSaverService") {
         }
 
         if (preferences.lensesWornOut()) {
-            preferences.progress = preferences.lensDuration * 10
+            preferences.progress = preferences.duration * 10
             sendBroadcast(Intent(ACTION_SEND_NOTIFICATION))
         } else {
             if (intent.getBooleanExtra(CLOSE_NOTIFICATION_KEY, false))
                 closeNotificationBar()
-            makeToast("$toastString ${getString(R.string.CHOSEN)}, ${getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.lensDuration)}", Toast.LENGTH_LONG)
+            makeToast("$toastString ${getString(R.string.CHOSEN)}, ${getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.duration)}", Toast.LENGTH_LONG)
         }
 
         preferences.date = System.currentTimeMillis()
+
+        val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+        task.execute()
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.ACTION_UPDATE_UI))
     }
