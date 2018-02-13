@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
             }
         }
         if(lastSynced == null){
-            val task = SyncPreferencesTask(getPreferencesResultHandler)
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
             task.execute()
         }
     }
