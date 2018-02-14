@@ -126,7 +126,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
             }
             reader.endObject()
             reader.close()
-            return Pair(lastChanged, tempPreferences)
+            return lastChanged to tempPreferences
         } catch (e: IllegalArgumentException) {
             Log.e("SyncPreferencesTask", Log.getStackTraceString(e))
             return null
