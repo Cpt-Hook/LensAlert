@@ -63,7 +63,7 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
 
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         tempPreferences.hours = hourOfDay
-        tempPreferences.minutes = minutes
+        tempPreferences.minutes = minute
 
         setTimeTextView()
     }
