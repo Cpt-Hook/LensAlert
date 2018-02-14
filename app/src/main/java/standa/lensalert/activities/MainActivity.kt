@@ -1,6 +1,7 @@
 package standa.lensalert.activities
 
 import android.app.Activity
+import android.app.AlarmManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -105,7 +106,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
             }
             else -> {
                 lastSynced?.let {
-                    if(it + (1000 * 60 * 0.25) < System.currentTimeMillis()){
+                    if(it + AlarmManager.INTERVAL_HOUR < System.currentTimeMillis()){
                         val task = SyncPreferencesTask(preferencesResultHandler)
                         task.execute()
                         return

@@ -50,7 +50,7 @@ class AlarmSetReceiver : BroadcastReceiver() {
            calendar.timeInMillis += AlarmManager.INTERVAL_DAY
         }
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
+        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.timeInMillis,
                 AlarmManager.INTERVAL_DAY, pendingIntent)
 
         val ampm = if(calendar[Calendar.AM_PM] == 0) "AM"
