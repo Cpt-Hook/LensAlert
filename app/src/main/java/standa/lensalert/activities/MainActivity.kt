@@ -7,10 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -37,11 +35,12 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == ACTION_UPDATE_UI) {
                 updateUI()
+                lastSynced = System.currentTimeMillis()
             }
         }
     }
 
-    private val getPreferencesResultHandler = object: ResultHandler {
+    private val preferencesResultHandler = object: ResultHandler {
         override val context: Context
             get() = this@MainActivity
         override val preferences: PreferencesManager
@@ -99,16 +98,20 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     override fun onResume() {
         super.onResume()
         updateUI()
-        lastSynced?.let {
-            if(it + (1000 * 60 * 30) < System.currentTimeMillis()){
-                val task = SyncPreferencesTask(getPreferencesResultHandler)
+        when(lastSynced){
+            null -> {
+                val task = SyncPreferencesTask(preferencesResultHandler)
                 task.execute()
-                return
             }
-        }
-        if(lastSynced == null){
-            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
-            task.execute()
+            else -> {
+                lastSynced?.let {
+                    if(it + (1000 * 60 * 0.25) < System.currentTimeMillis()){
+                        val task = SyncPreferencesTask(preferencesResultHandler)
+                        task.execute()
+                        return
+                    }
+                }
+            }
         }
     }
 
@@ -125,7 +128,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.refreshItem -> {
-                val task = SyncPreferencesTask(getPreferencesResultHandler)
+                val task = SyncPreferencesTask(preferencesResultHandler)
                 task.execute()
             }
             R.id.settingsItem -> {
@@ -192,7 +195,9 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         if(id == CLEAR_PROMPT_ID && responseCode == PromptFragment.POSITIVE){
             preferences.progress = 0
             preferences.date = 0
-            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences){
+                lastSynced = System.currentTimeMillis()
+            })
             task.execute()
             updateUI()
         }
@@ -202,7 +207,9 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         if(number != null){
             preferences.progress = (number*10).toInt()
             preferences.date = System.currentTimeMillis()
-            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences){
+                lastSynced = System.currentTimeMillis()
+            })
             task.execute()
             updateUI()
         }
