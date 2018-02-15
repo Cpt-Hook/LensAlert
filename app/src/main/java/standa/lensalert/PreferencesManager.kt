@@ -13,7 +13,6 @@ class PreferencesManager(context: Context) {
 
     val lastChanged by LongDelegate(PREFERENCES_LAST_CHANGED_KEY, 0)
 
-    var id by LongDelegate(PREFERENCES_ID_KEY, -1)
     var progress by IntDelegate(PREFERENCES_PROGRESS_KEY, 0)
     var duration by IntDelegate(PREFERENCES_DURATION_KEY, 14)
     var date by LongDelegate(PREFERENCES_DATE_KEY, 0)
@@ -26,7 +25,6 @@ class PreferencesManager(context: Context) {
 
         const val PREFERENCES_LAST_CHANGED_KEY = "PREFERENCES_LAST_CHANGED_KEY"
 
-        const val PREFERENCES_ID_KEY = "PREFERENCES_ID_KEY"
         const val PREFERENCES_PROGRESS_KEY = "PREFERENCES_PROGRESS_KEY"
         const val PREFERENCES_DURATION_KEY = "PREFERENCES_DURATION_KEY"
         const val PREFERENCES_DATE_KEY = "PREFERENCES_DATE_KEY"

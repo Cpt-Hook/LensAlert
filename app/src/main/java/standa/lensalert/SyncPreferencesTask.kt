@@ -5,6 +5,7 @@ import android.os.AsyncTask
 import android.util.JsonReader
 import android.util.JsonToken
 import android.util.Log
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import java.io.IOException
 
 
@@ -13,11 +14,16 @@ private const val URL_SET_PREFERENCES = "http://cpthook.maweb.eu/lensAlert/setPr
 
 class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>(), ResultHandler by handler {
 
+    private val account by lazy {
+        GoogleSignIn.getLastSignedInAccount(context)
+    }
+
     override fun onPostExecute(result: Int) {
         Log.i("SyncPreferencesTask", when (result) {
             1 -> "Finished: SUCCESS code"
             -1 -> "Finished: NO_INTERNET code"
             -2 -> "Finished: BAD_RESPONSE code"
+            -3 -> "Finished: NO_ACCOUNT"
             else -> "Finished: unknown code"
         })
         postExecute?.invoke(result)
@@ -29,7 +35,9 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
 
     override fun doInBackground(vararg params: Void?): Int {
         Log.i("SyncPreferencesTask", "run")
+
         if (!isNetworkAvailable(context)) return NO_INTERNET
+        else if(account == null) return NO_ACCOUNT
 
         val jsonPreferences = getPreferencesJson()
         val (lastChanged, tempPreferences) = jsonPreferences?.let { getTempPreferences(it) }
@@ -54,7 +62,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     private fun sendUpdateRequest(): Int {
-        val queryParams = "id=${preferences.id}" +
+        val queryParams = "id=${account!!.id}" +
                 "&progress=${preferences.progress}" +
                 "&duration=${preferences.duration}" +
                 "&hours=${preferences.hours}" +
@@ -74,7 +82,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     private fun getPreferencesJson(): String? {
-        val queryParams = "id=${preferences.id}"
+        val queryParams = "id=${account!!.id}"
         Log.i("SyncPreferencesTask", "Querying server with params: $queryParams")
 
         val time = System.nanoTime()
@@ -139,6 +147,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     companion object {
         const val NO_INTERNET = -1
         const val BAD_RESPONSE = -2
+        const val NO_ACCOUNT = -3
         const val SUCCESS = 1
 
         fun getBasicHandler(context: Context, preferences: PreferencesManager,

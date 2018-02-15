@@ -33,4 +33,6 @@
     <string name="SYNCED">Synced with server</string>
     <string name="FAILED_SYNC">Failed to sync with server</string>
     <string name="NO_INTERNET">No internet connection</string>
+    <string name="SIGN_OUT">Sign out</string>
+    <string name="LOG_IN_TO_SYNC">Log in to sync settings</string>
 </resources>

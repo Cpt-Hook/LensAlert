@@ -10,25 +10,31 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.android.synthetic.main.activity_main.*
 import standa.lensalert.*
-import standa.lensalert.fragments.PromptFragment
 import standa.lensalert.fragments.NumberPickerFragment
+import standa.lensalert.fragments.PromptFragment
 import standa.lensalert.fragments.UpdateProgressFragment
 import standa.lensalert.services.ProgressSaverService
 import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_HALF
 import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_NO
 import standa.lensalert.services.ProgressSaverService.Companion.PREFERENCES_YES
 
+
 class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgressFragment.Handler, NumberPickerFragment.Handler {
 
     override val preferences by lazy {
         PreferencesManager(this)
     }
+
+    private var account: GoogleSignInAccount? = null
 
     private var lastSynced: Long? = null
 
@@ -53,15 +59,18 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
             loadingProgressBar.visibility = View.INVISIBLE
             updateUI()
             lastSynced = System.currentTimeMillis()
+            if(it == SyncPreferencesTask.NO_ACCOUNT){
+                Toast.makeText(this@MainActivity, getString(R.string.LOG_IN_TO_SYNC), Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if(savedInstanceState != null && savedInstanceState.containsKey(LAST_SYNCED_KEY))
-            lastSynced = savedInstanceState.getLong(LAST_SYNCED_KEY)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if(savedInstanceState != null && savedInstanceState.containsKey(LAST_SYNCED_KEY))
+            lastSynced = savedInstanceState.getLong(LAST_SYNCED_KEY)
 
         setBtn.setOnClickListener {
             val progressFragment = UpdateProgressFragment()
@@ -86,6 +95,8 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
 
     override fun onStart() {
         super.onStart()
+        account = GoogleSignIn.getLastSignedInAccount(this)
+        Log.i("MainActivity", if(account == null) "No account yet" else "Account id: ${account?.id}")
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
                 IntentFilter(ACTION_UPDATE_UI)
         )
