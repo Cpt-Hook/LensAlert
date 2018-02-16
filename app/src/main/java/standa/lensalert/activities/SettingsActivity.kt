@@ -53,7 +53,7 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
         account = GoogleSignIn.getLastSignedInAccount(this)
         updateSignButtons()
 
-        title = getString(R.string.APP_NAME) + getString(R.string.SETTINGS)
+        title = "${getString(R.string.APP_NAME)} ${getString(R.string.SETTINGS)}"
 
         pickTimeBtn.setOnClickListener {
             val newFragment = TimePickerFragment()

@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.app.DialogFragment
 import android.content.DialogInterface
 import android.os.Bundle
+import standa.lensalert.R
 
 
 class PromptFragment : DialogFragment(){
@@ -19,10 +20,10 @@ class PromptFragment : DialogFragment(){
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity)
-        builder.setPositiveButton(arguments.getString(YES_BUTTON, "YES")) {
+        builder.setPositiveButton(arguments.getString(YES_BUTTON, getString(R.string.YES_BUTTON))) {
             _,_ -> responseHandler?.onPromptFragmentResponse(POSITIVE, promptId)
         }
-        builder.setNegativeButton(arguments.getString(NO_BUTTON, "NO")) {
+        builder.setNegativeButton(arguments.getString(NO_BUTTON, getString(R.string.NO_BUTTON))) {
             _,_ -> responseHandler?.onPromptFragmentResponse(NEGATIVE, promptId)
         }
         builder.setMessage(arguments.getString(MESSAGE, "Are you sure?"))
