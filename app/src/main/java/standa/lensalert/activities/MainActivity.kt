@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
             }
             else -> {
                 lastSynced?.let {
-                    if(it + AlarmManager.INTERVAL_HOUR < System.currentTimeMillis()){
+                    if(it + AlarmManager.INTERVAL_FIFTEEN_MINUTES < System.currentTimeMillis()){
                         val task = SyncPreferencesTask(preferencesResultHandler)
                         task.execute()
                         return

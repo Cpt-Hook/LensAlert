@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="APP_NAME">LensAlert</string>
+    <string name="NOTIFICATION_DESCRIPTION">Už jste dnes měl kontaktní čočky?</string>
+    <string name="YES_BUTTON">ANO</string>
+    <string name="HALF_BUTTON">PŮL DNE</string>
+    <string name="NO_BUTTON">NE</string>
+    <string name="LENSES_WORN_OUT">Vaše čočky vypotřebované. Měli byste je vyměnit!</string>
+    <string name="TIME_SETTINGS_DESCRIPTION">Každý den se v tomto čase bude zobrazovat upomínka:</string>
+    <string name="SIGNED_IN_EMAIL">"Přihlášen účet %s "</string>
+    <string name="LOG_IN_TO_SYNC">Pro synchronizaci nastavení se prosím přihlašte</string>
+    <string name="SIGN_OUT">Odhlásit</string>
+    <string name="NO_INTERNET">Připojení k internetu není k dispozici</string>
+    <string name="FAILED_SYNC">Nepodařilo se synchronizovat nastavení</string>
+    <string name="SYNCED">Synchronizace úspěšná</string>
+    <string name="REFRESH">Obnovit</string>
+    <string name="NOTIFICATION">Notifikace</string>
+    <string name="SETTINGS">Nastavení</string>
+    <string name="ABOUT">O aplikaci</string>
+    <string name="SAVE">ULOŽIT</string>
+    <string name="PICK_TIME">Vyberte si čas</string>
+    <string name="SETTINGS_SAVED">Nastavení uloženo</string>
+    <string name="TIME">Čas:</string>
+    <string name="NOTIFIATION_ICON">Ikona notifikace</string>
+    <string name="CANCEL">Zrušit</string>
+    <string name="SET">Nastavit ihned</string>
+    <string name="PROGRESS">%1$s z %2$d dní</string>
+    <string name="CHOSEN">vybráno</string>
+    <string name="INFO">Informace</string>
+    <string name="EXIT">Ukončit</string>
+    <string name="CLEAR">Nové čočky</string>
+    <string name="ENABLE">Zapnout</string>
+    <string name="LENS_LIFE_SPAN_DAYS">Životnost čoček (dny):</string>
+    <string name="LENS_LIFE_SPAN">Životnost kontaktních čoček:</string>
+    <string name="CHOOSE">Nastavit opotřebení</string>
+    <string name="WARNING">POZOR Dnes už jste zadal informace</string>
+    <string name="CLEAR_PROMPT">Opravdu chcete vymazat informace o těchto čočkách?</string>
+    <string name="CHOOSE_PROGRESS">Nastavte opotřebení vašich čoček:</string>
+</resources>
