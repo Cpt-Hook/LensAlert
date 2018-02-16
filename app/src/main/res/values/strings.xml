@@ -35,4 +35,5 @@
     <string name="NO_INTERNET">No internet connection</string>
     <string name="SIGN_OUT">Sign out</string>
     <string name="LOG_IN_TO_SYNC">Log in to sync settings</string>
+    <string name="SIGNED_IN_EMAIL">Signed in as %s</string>
 </resources>

@@ -6,7 +6,9 @@ import android.util.JsonReader
 import android.util.JsonToken
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import java.io.IOException
+import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 private const val URL_GET_PREFERENCES = "http://cpthook.maweb.eu/lensAlert/getPreferences.php"
@@ -62,7 +64,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     private fun sendUpdateRequest(): Int {
-        val queryParams = "id=${account!!.id}" +
+        val queryParams = "id=${account!!.id!!.hash64bit()}" +
                 "&progress=${preferences.progress}" +
                 "&duration=${preferences.duration}" +
                 "&hours=${preferences.hours}" +
@@ -82,7 +84,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     private fun getPreferencesJson(): String? {
-        val queryParams = "id=${account!!.id}"
+        val queryParams = "id=${account!!.id!!.hash64bit()}"
         Log.i("SyncPreferencesTask", "Querying server with params: $queryParams")
 
         val time = System.nanoTime()
@@ -142,6 +144,31 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
             Log.e("SyncPreferencesTask", Log.getStackTraceString(e))
             return null
         }
+    }
+
+    private fun getResponse(urlString: String, params: String): String? {
+
+        val url = URL(urlString)
+        val connection = url.openConnection() as HttpURLConnection
+
+        connection.requestMethod = "POST"
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+        connection.doOutput = true
+
+        val wr = BufferedWriter(OutputStreamWriter(connection.outputStream))
+        wr.write(params)
+        wr.flush()
+        wr.close()
+
+        if (connection.responseCode != 200) return null
+
+        val reader = BufferedReader(InputStreamReader(connection.inputStream))
+        val response = StringBuffer()
+        reader.forEachLine {
+            response.append(it)
+        }
+
+        return response.toString()
     }
 
     companion object {

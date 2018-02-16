@@ -30,6 +30,7 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
     private val googleSignInClient by lazy {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestId()
                 .build()
         GoogleSignIn.getClient(this, gso)
     }
@@ -62,7 +63,7 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
         saveBtn.setOnClickListener {
             try{
                 val durNumber =  durNumEditText.text.toString().toInt()
-                preferences.duration = durNumber
+                tempPreferences.duration = durNumber
             }catch (e: NumberFormatException){} //handle ""
 
             saveSettings()
@@ -141,10 +142,13 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
     private fun updateSignButtons(){
         if(account == null){
             signInBtn.visibility = View.VISIBLE
-            signOutBtn.visibility = View.INVISIBLE
+            signOutBtn.visibility = View.GONE
+            signOutLabel.visibility = View.GONE
         }else{
-            signInBtn.visibility = View.INVISIBLE
+            signInBtn.visibility = View.GONE
             signOutBtn.visibility = View.VISIBLE
+            signOutLabel.visibility = View.VISIBLE
+            signOutLabel.text = getString(R.string.SIGNED_IN_EMAIL, account!!.email)
         }
     }
 
