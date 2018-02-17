@@ -15,7 +15,7 @@
     <string name="TIME_SETTINGS_DESCRIPTION">Everyday a prompt notification will be shown at set time:</string>
     <string name="LENS_LIFE_SPAN_DAYS">Lens life span (days):</string>
     <string name="ENABLE">Enable</string>
-    <string name="NOTIFIATION_ICON">Notification icon</string>
+    <string name="NOTIFICATION_ICON">Notification icon</string>
     <string name="LENS_LIFE_SPAN">Contact lens life span:</string>
     <string name="PROGRESS">%1$s out of %2$d days</string>
     <string name="CANCEL">Cancel</string>
@@ -36,4 +36,5 @@
     <string name="LOG_IN_TO_SYNC">Log in to sync settings</string>
     <string name="SIGNED_IN_EMAIL">Signed in as %s</string>
     <string name="NO_INTERNET">No internet connection</string>
+    <string name="FIRST_USE">First use: %s</string>
 </resources>

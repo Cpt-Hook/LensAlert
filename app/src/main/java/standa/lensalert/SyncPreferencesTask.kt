@@ -39,7 +39,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
         Log.i("SyncPreferencesTask", "run")
 
         if (!isNetworkAvailable(context)) return NO_INTERNET
-        else if(account == null) return NO_ACCOUNT
+        else if (account == null) return NO_ACCOUNT
 
         val jsonPreferences = getPreferencesJson()
         val (lastChanged, tempPreferences) = jsonPreferences?.let { getTempPreferences(it) }
@@ -71,7 +71,8 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
                 "&minutes=${preferences.minutes}" +
                 "&date=${preferences.date}" +
                 "&setAlarm=${if (preferences.setAlarm) 1 else 0}" +
-                "&lastChanged=${preferences.lastChanged}"
+                "&lastChanged=${preferences.lastChanged}" +
+                "&startDate=${preferences.startDate}"
 
         Log.i("SyncPreferencesTask", "Querying server with params: $queryParams")
 
@@ -125,6 +126,9 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
                     "setAlarm" -> {
                         tempPreferences.setAlarm = reader.nextInt() == 1
                     }
+                    "startDate" -> {
+                        tempPreferences.startDate = reader.nextLong()
+                    }
                     "lastChanged" -> {
                         lastChanged = reader.nextLong()
                     }
@@ -147,7 +151,6 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     private fun getResponse(urlString: String, params: String): String? {
-
         val url = URL(urlString)
         val connection = url.openConnection() as HttpURLConnection
 

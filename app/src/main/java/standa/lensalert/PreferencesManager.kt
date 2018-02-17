@@ -19,6 +19,7 @@ class PreferencesManager(context: Context) {
     var hours by IntDelegate(PREFERENCES_NOTIFICATION_HOUR_KEY, 0)
     var minutes by IntDelegate(PREFERENCES_NOTIFICATION_MINUTE_KEY, 0)
     var setAlarm by BooleanDelegate(PREFERENCES_SET_ALARM_KEY, true)
+    var startDate by LongDelegate(PREFERENCES_START_DAY, -1)
 
     companion object {
         const val PREFERENCES_FILE_NAME = "standa.lensalert.PREFFERENCES"
@@ -31,6 +32,7 @@ class PreferencesManager(context: Context) {
         const val PREFERENCES_NOTIFICATION_HOUR_KEY = "PREFERENCES_NOTIFICATION_HOUR_KEY"
         const val PREFERENCES_NOTIFICATION_MINUTE_KEY = "PREFERENCES_NOTIFICATION_MINUTE_KEY"
         const val PREFERENCES_SET_ALARM_KEY = "PREFERENCES_SET_ALARM_KEY"
+        const val PREFERENCES_START_DAY = "PREFERENCES_START_DAY"
     }
 }
 

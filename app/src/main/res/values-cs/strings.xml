@@ -21,7 +21,7 @@
     <string name="PICK_TIME">Vybrat čas</string>
     <string name="SETTINGS_SAVED">Nastavení uloženo</string>
     <string name="TIME">Čas:</string>
-    <string name="NOTIFIATION_ICON">Ikona notifikace</string>
+    <string name="NOTIFICATION_ICON">Ikona notifikace</string>
     <string name="CANCEL">Zrušit</string>
     <string name="SET">Nastavit ihned</string>
     <string name="PROGRESS">%1$s z %2$d dní</string>
@@ -36,4 +36,5 @@
     <string name="WARNING">POZOR Dnes už jste zadal informace</string>
     <string name="CLEAR_PROMPT">Opravdu chcete vymazat informace o těchto čočkách?</string>
     <string name="CHOOSE_PROGRESS">Nastavte opotřebení vašich čoček:</string>
+    <string name="FIRST_USE">Poprvé použity: %s</string>
 </resources>

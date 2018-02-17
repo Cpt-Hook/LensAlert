@@ -43,6 +43,7 @@ fun String.hash64bit(): Long {
     fun ByteArray.toLong(): Long {
         return ByteBuffer.wrap(this).long
     }
+
     val time = System.nanoTime()
 
     val spec = PBEKeySpec(this.toCharArray(), byteArrayOf(0), 256, 64)
@@ -52,22 +53,31 @@ fun String.hash64bit(): Long {
     return hash.toLong()
 }
 
-data class TempPreferences(var progress:Int? = null,
+fun Long.getStringDate(): String {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = this
+
+    return "${calendar[Calendar.DAY_OF_MONTH]}. ${calendar[Calendar.MONTH] + 1}. ${calendar[Calendar.YEAR]}"
+}
+
+data class TempPreferences(var progress: Int? = null,
                            var duration: Int? = null,
                            var date: Long? = null,
                            var hours: Int? = null,
                            var minutes: Int? = null,
-                           var setAlarm: Boolean? = null) {
+                           var setAlarm: Boolean? = null,
+                           var startDate: Long? = null) {
 
-    fun saveChangedPreferences(preferences: PreferencesManager){
-        progress?.let{preferences.progress=it}
-        duration?.let{preferences.duration=it}
-        date?.let{preferences.date=it}
-        hours?.let{preferences.hours=it}
-        minutes?.let{preferences.minutes=it}
-        setAlarm?.let{preferences.setAlarm=it}
+    fun saveChangedPreferences(preferences: PreferencesManager) {
+        progress?.let { preferences.progress = it }
+        duration?.let { preferences.duration = it }
+        date?.let { preferences.date = it }
+        hours?.let { preferences.hours = it }
+        minutes?.let { preferences.minutes = it }
+        setAlarm?.let { preferences.setAlarm = it }
+        startDate?.let { preferences.startDate = it }
 
-        if(preferences.lensesWornOut())
+        if (preferences.lensesWornOut())
             preferences.progress = preferences.duration * 10
     }
 }

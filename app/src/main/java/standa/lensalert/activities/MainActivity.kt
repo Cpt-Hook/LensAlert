@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         }
     }
 
-    private val preferencesResultHandler = object: ResultHandler {
+    private val preferencesResultHandler = object : ResultHandler {
         override val context: Context
             get() = this@MainActivity
         override val preferences: PreferencesManager
@@ -55,11 +55,11 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         override val preExecute: () -> Unit = {
             loadingProgressBar.visibility = View.VISIBLE
         }
-        override val postExecute: (Int)-> Unit = {
+        override val postExecute: (Int) -> Unit = {
             loadingProgressBar.visibility = View.INVISIBLE
             updateUI()
             lastSynced = System.currentTimeMillis()
-            if(it == SyncPreferencesTask.NO_ACCOUNT){
+            if (it == SyncPreferencesTask.NO_ACCOUNT) {
                 Toast.makeText(this@MainActivity, getString(R.string.LOG_IN_TO_SYNC), Toast.LENGTH_LONG).show()
             }
         }
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(LAST_SYNCED_KEY))
+        if (savedInstanceState != null && savedInstanceState.containsKey(LAST_SYNCED_KEY))
             lastSynced = savedInstanceState.getLong(LAST_SYNCED_KEY)
 
         setBtn.setOnClickListener {
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     override fun onStart() {
         super.onStart()
         account = GoogleSignIn.getLastSignedInAccount(this)
-        Log.i("MainActivity", if(account == null) "No account yet" else "Account id: ${account?.id}")
+        Log.i("MainActivity", if (account == null) "No account yet" else "Account id: ${account?.id}")
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
                 IntentFilter(ACTION_UPDATE_UI)
         )
@@ -110,14 +110,14 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     override fun onResume() {
         super.onResume()
         updateUI()
-        when(lastSynced){
+        when (lastSynced) {
             null -> {
                 val task = SyncPreferencesTask(preferencesResultHandler)
                 task.execute()
             }
             else -> {
                 lastSynced?.let {
-                    if(it + AlarmManager.INTERVAL_FIFTEEN_MINUTES < System.currentTimeMillis()){
+                    if (it + AlarmManager.INTERVAL_FIFTEEN_MINUTES < System.currentTimeMillis()) {
                         val task = SyncPreferencesTask(preferencesResultHandler)
                         task.execute()
                         return
@@ -169,6 +169,12 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         progressBar.progress = preferences.progress
         progressTextView.text = getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.duration)
 
+        if (preferences.startDate != -1L) {
+            startDateTextView.text = getString(R.string.FIRST_USE, preferences.startDate.getStringDate())
+            startDateTextView.visibility = View.VISIBLE
+        } else
+            startDateTextView.visibility = View.GONE
+
         if (preferences.lensesWornOut())
             progressBar.progressTintList = ColorStateList.valueOf(getColor(R.color.colorPrimaryDark))
         else {
@@ -204,10 +210,11 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     }
 
     override fun onPromptFragmentResponse(responseCode: Int, id: Int) {
-        if(id == CLEAR_PROMPT_ID && responseCode == PromptFragment.POSITIVE){
+        if (id == CLEAR_PROMPT_ID && responseCode == PromptFragment.POSITIVE) {
             preferences.progress = 0
             preferences.date = 0
-            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences){
+            preferences.startDate = -1
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences) {
                 lastSynced = System.currentTimeMillis()
             })
             task.execute()
@@ -216,10 +223,10 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
     }
 
     override fun onNumberPickerFragmentClick(number: Double?) {
-        if(number != null){
-            preferences.progress = (number*10).toInt()
+        if (number != null) {
+            preferences.progress = (number * 10).toInt()
             preferences.date = System.currentTimeMillis()
-            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences){
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences) {
                 lastSynced = System.currentTimeMillis()
             })
             task.execute()

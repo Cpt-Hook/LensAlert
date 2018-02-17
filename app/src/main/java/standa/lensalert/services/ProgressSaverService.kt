@@ -24,12 +24,23 @@ class ProgressSaverService : IntentService("ProgressSaverService") {
     override fun onHandleIntent(intent: Intent) {
         Log.i("ProgressSaverService", "run")
 
-        if (intent.hasExtra(PREFERENCES_PROGRESS_KEY))
+        if (intent.hasExtra(PREFERENCES_PROGRESS_KEY)){
             updateProgress(intent)
+
+            preferences.date = System.currentTimeMillis()
+
+            val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+            task.execute()
+
+            LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.ACTION_UPDATE_UI))
+        }
     }
 
     private fun updateProgress(intent: Intent) {
         val toastString: String
+
+        if(preferences.progress == 0)
+            preferences.startDate = System.currentTimeMillis()
 
         when (intent.getStringExtra(PREFERENCES_PROGRESS_KEY)) {
             PREFERENCES_YES -> {
@@ -57,13 +68,6 @@ class ProgressSaverService : IntentService("ProgressSaverService") {
                 closeNotificationBar()
             makeToast("$toastString ${getString(R.string.CHOSEN)}, ${getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.duration)}", Toast.LENGTH_LONG)
         }
-
-        preferences.date = System.currentTimeMillis()
-
-        val task = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
-        task.execute()
-
-        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(MainActivity.ACTION_UPDATE_UI))
     }
 
     private fun closeNotificationBar(){
