@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
             }
             else -> {
                 lastSynced?.let {
-                    if (it + AlarmManager.INTERVAL_FIFTEEN_MINUTES < System.currentTimeMillis()) {
+                    if (it + syncInterval < System.currentTimeMillis()) {
                         val task = SyncPreferencesTask(preferencesResultHandler)
                         task.execute()
                         return
@@ -238,5 +238,6 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         const val ACTION_UPDATE_UI = "standa.lensalert.activities.ACTION_UPDATE_UI"
         const val LAST_SYNCED_KEY = "LAST_SYNCED_KEY"
         private const val CLEAR_PROMPT_ID = 1
+        private const val syncInterval: Long = AlarmManager.INTERVAL_FIFTEEN_MINUTES
     }
 }
