@@ -22,7 +22,7 @@
     <string name="SET">Set now</string>
     <string name="CLEAR">New lenses</string>
     <string name="CHOOSE">Choose wear</string>
-    <string name="WARNING">WARNING You have already set info today!</string>
+    <string name="WARNING">WARNING, you have already set info today at %s!</string>
     <string name="CLEAR_PROMPT">Are you sure you want to clear your lens info?</string>
     <string name="EXIT">Exit</string>
     <string name="INFO">Info</string>

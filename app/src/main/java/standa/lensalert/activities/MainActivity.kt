@@ -169,12 +169,6 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         progressBar.progress = preferences.progress
         progressTextView.text = getString(R.string.PROGRESS, (preferences.progress / 10.0).toNiceString(), preferences.duration)
 
-        if (preferences.startDate != -1L) {
-            startDateTextView.text = getString(R.string.FIRST_USE, preferences.startDate.getStringDate())
-            startDateTextView.visibility = View.VISIBLE
-        } else
-            startDateTextView.visibility = View.GONE
-
         if (preferences.lensesWornOut())
             progressBar.progressTintList = ColorStateList.valueOf(getColor(R.color.colorPrimaryDark))
         else {
@@ -183,13 +177,19 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
 
         progressBar.invalidate()
 
+        if (preferences.startDate != -1L) {
+            startDateTextView.text = getString(R.string.FIRST_USE, preferences.startDate.getStringDate())
+            startDateTextView.visibility = View.VISIBLE
+        } else
+            startDateTextView.visibility = View.GONE
+
         when {
             preferences.lensesWornOut() -> {
                 warningTextView.text = getString(R.string.LENSES_WORN_OUT)
                 warningTextView.visibility = View.VISIBLE
             }
             preferences.date.isAfterYesterday() -> {
-                warningTextView.text = getString(R.string.WARNING)
+                warningTextView.text = getString(R.string.WARNING, preferences.date.getHoursAndMinutes())
                 warningTextView.visibility = View.VISIBLE
             }
             else -> warningTextView.visibility = View.GONE

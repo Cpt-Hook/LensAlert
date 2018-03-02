@@ -53,9 +53,7 @@ class AlarmSetReceiver : BroadcastReceiver() {
         alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.timeInMillis,
                 AlarmManager.INTERVAL_DAY, pendingIntent)
 
-        val ampm = if(calendar[Calendar.AM_PM] == 0) "AM"
-                   else "PM"
-        Log.i("AlarmSetReceiver", "Notifications scheduled every ${calendar[Calendar.HOUR]}:${calendar[Calendar.MINUTE]}$ampm")
+        Log.i("AlarmSetReceiver", "Notifications scheduled every ${calendar[Calendar.HOUR_OF_DAY]}:${calendar[Calendar.MINUTE]}")
     }
 
     companion object {

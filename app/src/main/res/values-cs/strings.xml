@@ -33,7 +33,7 @@
     <string name="LENS_LIFE_SPAN_DAYS">Životnost čoček (dny):</string>
     <string name="LENS_LIFE_SPAN">Životnost kontaktních čoček:</string>
     <string name="CHOOSE">Nastavit opotřebení</string>
-    <string name="WARNING">POZOR Dnes už jste zadal informace</string>
+    <string name="WARNING">POZOR, dnes už jste zadal informace v %s!</string>
     <string name="CLEAR_PROMPT">Opravdu chcete vymazat informace o těchto čočkách?</string>
     <string name="CHOOSE_PROGRESS">Nastavte opotřebení vašich čoček:</string>
     <string name="FIRST_USE">Poprvé použity: %s</string>

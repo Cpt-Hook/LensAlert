@@ -24,6 +24,12 @@ fun Long.isAfterYesterday(): Boolean {
     return this >= calendar.timeInMillis
 }
 
+fun Long.getHoursAndMinutes(): String {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = this
+    return "${calendar[Calendar.HOUR_OF_DAY]}:${calendar[Calendar.MINUTE]}"
+}
+
 fun Double.toNiceString(): String {
     return if (this % 1.0 != 0.0)
         String.format("%s", this)
@@ -36,6 +42,7 @@ fun isNetworkAvailable(context: Context): Boolean {
     val activeNetworkInfo = connectivityManager.activeNetworkInfo
     return activeNetworkInfo != null && activeNetworkInfo.isConnected
 }
+
 
 fun String.hash64bit(): Long {
     val algorithm = "PBKDF2WithHmacSHA1"
