@@ -25,9 +25,11 @@ fun Long.isAfterYesterday(): Boolean {
 }
 
 fun Long.getHoursAndMinutes(): String {
+    fun Int.format() = if(this <= 9) "0$this" else "$this"
+
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = this
-    return "${calendar[Calendar.HOUR_OF_DAY]}:${calendar[Calendar.MINUTE]}"
+    return "${calendar[Calendar.HOUR_OF_DAY]}:${calendar[Calendar.MINUTE].format()}"
 }
 
 fun Double.toNiceString(): String {
