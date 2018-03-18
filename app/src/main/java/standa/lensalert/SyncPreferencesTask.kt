@@ -11,8 +11,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-private const val URL_GET_PREFERENCES = "http://cpthook.maweb.eu/lensAlert/getPreferences.php"
-private const val URL_SET_PREFERENCES = "http://cpthook.maweb.eu/lensAlert/setPreferences.php"
+private const val URL_GET_PREFERENCES = "http://cpthook.ddns.net/lensAlert/getPreferences.php"
+private const val URL_SET_PREFERENCES = "http://cpthook.ddns.net/lensAlert/setPreferences.php"
 
 class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>(), ResultHandler by handler {
 
