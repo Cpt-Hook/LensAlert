@@ -58,7 +58,7 @@ fun String.hash64bit(): Long {
     val spec = PBEKeySpec(this.toCharArray(), byteArrayOf(0), 256, 64)
     val f = SecretKeyFactory.getInstance(algorithm)
     val hash = f.generateSecret(spec).encoded
-    Log.i("Utils", "delay: ${((System.nanoTime() - time) / 1e6).toInt()}ms")
+    Log.i("Utils", "Hash delay: ${((System.nanoTime() - time) / 1e6).toInt()}ms")
     return hash.toLong()
 }
 
