@@ -61,7 +61,8 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
             lastSynced = System.currentTimeMillis()
             if (it == SyncPreferencesTask.NO_ACCOUNT) {
                 Toast.makeText(this@MainActivity, getString(R.string.LOG_IN_TO_SYNC), Toast.LENGTH_LONG).show()
-            }
+            }else if(it == SyncPreferencesTask.BAD_RESPONSE)
+                Toast.makeText(this@MainActivity, getString(R.string.BAD_RESPONSE_ERROR), Toast.LENGTH_LONG).show()
         }
     }
 

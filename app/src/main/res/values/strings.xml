@@ -37,4 +37,5 @@
     <string name="SIGNED_IN_EMAIL">Signed in as %s</string>
     <string name="NO_INTERNET">No internet connection</string>
     <string name="FIRST_USE">First use: %s</string>
+    <string name="BAD_RESPONSE_ERROR">Unable to connect to server.</string>
 </resources>

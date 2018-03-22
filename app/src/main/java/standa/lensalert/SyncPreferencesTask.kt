@@ -158,6 +158,13 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
         connection.doOutput = true
 
+        try{
+            connection.connect()
+        }
+        catch (e: IOException) {
+            return null
+        }
+
         val wr = BufferedWriter(OutputStreamWriter(connection.outputStream))
         wr.write(params)
         wr.flush()
