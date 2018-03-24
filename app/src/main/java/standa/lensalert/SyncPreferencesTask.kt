@@ -157,6 +157,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
         connection.requestMethod = "POST"
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
         connection.doOutput = true
+        connection.connectTimeout = 5000
 
         try{
             connection.connect()
