@@ -177,8 +177,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
         }
 
         progressBar.invalidate()
-
-        if (preferences.startDate != -1L || preferences.startDate != 0L) {
+        if (preferences.startDate != -1L && preferences.startDate != 0L) {
             startDateTextView.text = getString(R.string.FIRST_USE, preferences.startDate.getStringDate())
             startDateTextView.visibility = View.VISIBLE
         } else
