@@ -30,7 +30,7 @@
         <receiver
             android:name=".receivers.NotificationReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="standa.lensalert.receivers.ACTION_SEND_NOTIFICATION" />
             </intent-filter>
