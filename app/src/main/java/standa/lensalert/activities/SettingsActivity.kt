@@ -111,7 +111,7 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
             updateSignButtons()
             Log.i("SettingsActivity", "signInResult:successful id= ${account.id}")
         } catch (e: ApiException) {
-            Log.w("SettingsActivity", "signInResult:failed code= ${e.statusCode}, message= ${GoogleSignInStatusCodes.getStatusCodeString(e.statusCode)}")
+            Log.w("SettingsActivity", "signInResult:failed code=${e.statusCode}, message=${GoogleSignInStatusCodes.getStatusCodeString(e.statusCode)}")
         }
     }
 
