@@ -39,7 +39,7 @@ class ProgressSaverService : IntentService("ProgressSaverService") {
     private fun updateProgress(intent: Intent) {
         val toastString: String
 
-        if(preferences.progress == 0)
+        if(preferences.progress == 0 && intent.getStringExtra(PREFERENCES_PROGRESS_KEY) != PREFERENCES_NO)
             preferences.startDate = System.currentTimeMillis()
 
         when (intent.getStringExtra(PREFERENCES_PROGRESS_KEY)) {
