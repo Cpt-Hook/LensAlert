@@ -7,15 +7,15 @@ import android.util.JsonToken
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import java.io.*
-import java.net.HttpURLConnection
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
 
-private const val URL_GET_PREFERENCES = "http://cpthook.ddns.net/lensAlert/getPreferences.php"
-private const val URL_SET_PREFERENCES = "http://cpthook.ddns.net/lensAlert/setPreferences.php"
+private const val URL_GET_PREFERENCES = "https://cpthook.ddns.net/lensAlert/getPreferences.php"
+private const val URL_SET_PREFERENCES = "https://cpthook.ddns.net/lensAlert/setPreferences.php"
 
 class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>(), ResultHandler by handler {
-
+//TODO authenticate id server side -> https://developers.google.com/identity/sign-in/web/backend-auth
     private val account by lazy {
         GoogleSignIn.getLastSignedInAccount(context)
     }
@@ -36,8 +36,6 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     override fun doInBackground(vararg params: Void?): Int {
-        Log.i("SyncPreferencesTask", "run")
-
         if (!isNetworkAvailable(context)) return NO_INTERNET
         else if (account == null) return NO_ACCOUNT
 
@@ -64,7 +62,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     private fun sendUpdateRequest(): Int {
-        val queryParams = "id=${account!!.id!!.hash64bit()}" +
+        val queryParams = "id=${account!!.id}" +
                 "&progress=${preferences.progress}" +
                 "&duration=${preferences.duration}" +
                 "&hours=${preferences.hours}" +
@@ -85,7 +83,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
     }
 
     private fun getPreferencesJson(): String? {
-        val queryParams = "id=${account!!.id!!.hash64bit()}"
+        val queryParams = "id=${account!!.id}"
         Log.i("SyncPreferencesTask", "Querying server with params: $queryParams")
 
         val time = System.nanoTime()
@@ -152,7 +150,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
 
     private fun getResponse(urlString: String, params: String): String? {
         val url = URL(urlString)
-        val connection = url.openConnection() as HttpURLConnection
+        val connection = url.openConnection() as HttpsURLConnection
 
         connection.requestMethod = "POST"
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")

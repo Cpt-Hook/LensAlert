@@ -149,7 +149,7 @@ class MainActivity : AppCompatActivity(), PromptFragment.Handler, UpdateProgress
                 startActivityForResult(settingsIntent, 0)
             }
             R.id.infoItem -> {
-                //TODO
+                //TODO add functionality to info button
             }
             R.id.exitItem -> {
                 System.exit(1)
