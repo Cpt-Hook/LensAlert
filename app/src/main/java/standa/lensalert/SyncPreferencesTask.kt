@@ -1,11 +1,13 @@
 package standa.lensalert
 
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
 import android.util.JsonReader
 import android.util.JsonToken
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import standa.lensalert.receivers.AlarmSetReceiver
 import java.io.*
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
@@ -14,7 +16,7 @@ import javax.net.ssl.HttpsURLConnection
 private const val URL_GET_PREFERENCES = "https://cpthook.ddns.net/lensAlert/getPreferences.php"
 private const val URL_SET_PREFERENCES = "https://cpthook.ddns.net/lensAlert/setPreferences.php"
 
-class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>(), ResultHandler by handler {
+class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<String, Void, Int>(), ResultHandler by handler {
 //TODO authenticate id server side -> https://developers.google.com/identity/sign-in/web/backend-auth
     private val account by lazy {
         GoogleSignIn.getLastSignedInAccount(context)
@@ -35,7 +37,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
         preExecute?.invoke()
     }
 
-    override fun doInBackground(vararg params: Void?): Int {
+    override fun doInBackground(vararg params: String?): Int {
         if (!isNetworkAvailable(context)) return NO_INTERNET
         else if (account == null) return NO_ACCOUNT
 
@@ -45,13 +47,25 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
 
         Log.i("SyncPreferencesTask", "Local time: ${preferences.lastChanged}, Server time: $lastChanged")
         return when {
-            preferences.lastChanged == lastChanged -> {
-                Log.i("SyncPreferencesTask", "Preferences already in sync")
+            (params.isNotEmpty() && params[0] == FORCE_UPDATE_LOCAL_PREFERENCES) || preferences.lastChanged < lastChanged -> {
+                Log.i("SyncPreferencesTask", "Updating local preferences")
+
+                if(tempPreferences.setAlarm != preferences.setAlarm ||
+                        tempPreferences.hours != preferences.hours ||
+                        tempPreferences.minutes != preferences.minutes){
+                    tempPreferences.setAlarm?.let {
+                        val alarmAction =
+                                if (it) AlarmSetReceiver.ACTION_ALARM_SET
+                                else AlarmSetReceiver.ACTION_ALARM_DISABLE
+                        context.sendBroadcast(Intent(alarmAction))
+                    }
+                }
+
+                tempPreferences.saveChangedPreferences(preferences)
                 SUCCESS
             }
-            preferences.lastChanged < lastChanged -> {
-                Log.i("SyncPreferencesTask", "Updating local preferences")
-                tempPreferences.saveChangedPreferences(preferences)
+            preferences.lastChanged == lastChanged -> {
+                Log.i("SyncPreferencesTask", "Preferences already in sync")
                 SUCCESS
             }
             else -> {
@@ -172,7 +186,7 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
         if (connection.responseCode != 200) return null
 
         val reader = BufferedReader(InputStreamReader(connection.inputStream))
-        val response = StringBuffer()
+        val response = StringBuilder()
         reader.forEachLine {
             response.append(it)
         }
@@ -185,6 +199,8 @@ class SyncPreferencesTask(handler: ResultHandler) : AsyncTask<Void, Void, Int>()
         const val BAD_RESPONSE = -2
         const val NO_ACCOUNT = -3
         const val SUCCESS = 1
+
+        const val FORCE_UPDATE_LOCAL_PREFERENCES = "FORCE_UPDATE_LOCAL_PREFERENCES"
 
         fun getBasicHandler(context: Context, preferences: PreferencesManager,
                             preExecute: (() -> Unit)? = null, postExecute: ((Int) -> Unit)? = null): ResultHandler {

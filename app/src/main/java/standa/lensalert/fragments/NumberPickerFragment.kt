@@ -18,9 +18,9 @@ class NumberPickerFragment : DialogFragment() {
     }
 
     private val values: Array<String> by lazy {
-        Array((handler.preferences.duration * 2) + 1, { i ->
+        Array((handler.preferences.duration * 2) + 1) { i ->
             (i/2.0).toNiceString()
-        })
+        }
     }
 
     private var numberPicked: Double? = null

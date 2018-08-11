@@ -5,7 +5,7 @@
     <string name="YES_BUTTON">ANO</string>
     <string name="HALF_BUTTON">PŮL DNE</string>
     <string name="NO_BUTTON">NE</string>
-    <string name="LENSES_WORN_OUT">Vaše čočky vypotřebované. Měli byste je vyměnit!</string>
+    <string name="LENSES_WORN_OUT">Vaše čočky jsou vypotřebované. Měl byste je vyměnit!</string>
     <string name="TIME_SETTINGS_DESCRIPTION">Každý den se v tomto čase bude zobrazovat upomínka:</string>
     <string name="SIGNED_IN_EMAIL">"Přihlášen účet %s "</string>
     <string name="LOG_IN_TO_SYNC">Pro synchronizaci nastavení se prosím přihlašte</string>

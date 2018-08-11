@@ -81,7 +81,7 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
             googleSignInClient.signOut().addOnCompleteListener(this) {
                         account = null
                         updateSignButtons()
-                    }
+            }
         }
 
         durNumEditText.setText(preferences.duration.toString(), TextView.BufferType.EDITABLE)
@@ -108,6 +108,10 @@ class SettingsActivity : AppCompatActivity(), TimePickerFragment.Handler {
         try {
             val account = task.getResult(ApiException::class.java)
             this.account = account
+
+            val syncTask = SyncPreferencesTask(SyncPreferencesTask.getBasicHandler(this, preferences))
+            syncTask.execute(SyncPreferencesTask.FORCE_UPDATE_LOCAL_PREFERENCES)
+
             updateSignButtons()
             Log.i("SettingsActivity", "signInResult:successful id= ${account.id}")
         } catch (e: ApiException) {
